@@ -14,5 +14,9 @@
   "type": "module",
   "workspaces": [
     "src/greet_frontend"
-  ]
+  ],
+  "devDependencies": {
+    "@dfinity/auth-client": "^2.1.1",
+    "@dfinity/identity": "^2.1.1"
+  }
 }
