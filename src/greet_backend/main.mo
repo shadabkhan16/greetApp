@@ -1,6 +1,4 @@
 import Debug "mo:base/Debug";
-import Nat "mo:base/Nat";
-import Int "mo:base/Int"; 
 import Time "mo:base/Time";
 import Float "mo:base/Float";
 
