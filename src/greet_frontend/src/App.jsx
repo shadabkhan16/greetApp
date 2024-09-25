@@ -1,58 +1,106 @@
-import { useState } from 'react';
-import { greet_backend } from 'declarations/greet_backend';
+import React, { useEffect, useState } from 'react';
+import bankImage from "/favicon.ico"
+import { greet_backend  as initialValue} from '../../declarations/greet_backend';
 
-function App() {
-  const [greeting, setGreeting] = useState('');
+const App = () => {
+  const [currentValue, setCurrentValue] = useState(0); // Default balance
+  const [topUpAmount, setTopUpAmount] = useState(0);
+  const [withdrawalAmount, setWithdrawalAmount] = useState(0);
 
-  function handleSubmit(event) {
+  useEffect(() => {
+    let isMounted = true; // This flag ensures that we update the state only if the component is mounted
+  
+    const fetchBalance = async () => {
+      const currentAmount = await initialValue.checkBalance();
+      if (isMounted) {
+        setCurrentValue(currentAmount);
+      }
+    };
+  
+    fetchBalance();
+  
+    return () => {
+      isMounted = false; // Cleanup function to prevent state update if the component is unmounted
+    };
+  }, []);
+
+  const handleTopUpChange = (event) => {
+    setTopUpAmount(parseFloat(event.target.value)); // Set top-up amount
+  };
+
+  const handleWithdrawChange = (event) => {
+    setWithdrawalAmount(parseFloat(event.target.value)); // Set withdrawal amount
+  };
+
+  const handleSubmit = (event) => {
     event.preventDefault();
-    const name = event.target.elements.name.value;
-    greet_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
-    });
-    return false;
-  }
+
+    // Perform the top-up
+    let newValue = currentValue + topUpAmount;
+
+    // Perform the withdrawal if there is enough balance
+    if (withdrawalAmount <= newValue) {
+      newValue -= withdrawalAmount;
+      alert('Transaction successful!');
+    } else {
+      alert('Insufficient balance!');
+    }
+
+    // Update the current balance
+    setCurrentValue(newValue);
+
+    // Clear input fields after submission
+    setTopUpAmount(0);
+    setWithdrawalAmount(0);
+  };
 
   return (
-    <div className="m-20 p-6 bg-gray-50 rounded-lg shadow-lg">
-  <h1 className="text-blue-700 text-center text-3xl font-bold mb-8">
-    Demo Of MOTKO (backend) and React JS (frontend)
-  </h1>
-  
-  <main className="flex flex-col items-center">
-    <img src="/logo2.svg" alt="DFINITY logo" className="w-32 h-32 mb-6" />
-    
-    <form action="#" onSubmit={handleSubmit} className="w-full max-w-md">
-      <div className="mb-4">
-        <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
-          Enter your name:
-        </label>
-        <input 
-          id="name" 
-          alt="Name" 
-          type="text" 
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        />
+    <div className="container mx-auto mt-10 p-5 max-w-md border rounded-lg shadow-lg bg-white">
+      <div className="text-center">
+        <img src={bankImage} alt="DBank logo" className="mx-auto mb-4 w-24" />
+        <h1 className="text-2xl font-bold mb-4">Current Balance: <span className="text-green-600">${currentValue.toFixed(2)}</span></h1>
       </div>
-      
-      <button 
-        type="submit" 
-        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-      >
-        Click Me!
-      </button>
-    </form>
-    
-    <section id="greeting" className="mt-6 text-lg text-center text-gray-700">
-      {greeting}
-    </section>
-  </main>
-</div>
 
+      <div className="border-b my-4"></div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <h2 className="text-lg font-semibold mb-2">Amount to Top Up</h2>
+          <input
+            id="input-amount"
+            type="number"
+            step="0.01"
+            min="0"
+            value={topUpAmount}
+            onChange={handleTopUpChange}
+            className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+
+        <div>
+          <h2 className="text-lg font-semibold mb-2">Amount to Withdraw</h2>
+          <input
+            id="withdrawal-amount"
+            type="number"
+            step="0.01"
+            min="0"
+            value={withdrawalAmount}
+            onChange={handleWithdrawChange}
+            className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+
+        <div>
+          <input
+            id="submit-btn"
+            type="submit"
+            value="Finalise Transaction"
+            className="w-full py-2 px-4 bg-green-600 text-white font-bold rounded-md hover:bg-green-700 transition-colors"
+          />
+        </div>
+      </form>
+    </div>
   );
-}
+};
 
 export default App;
-
-
-
