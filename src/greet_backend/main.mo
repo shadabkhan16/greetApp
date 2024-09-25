@@ -3,12 +3,14 @@ import Nat "mo:base/Nat";
 import Int "mo:base/Int";
 
 actor  greet{
-  var  currentValue = 200;
-  // let id  =234 ;  // behaviour like  constant
+  // var  currentValue = 200;  felxiable variable
+  // orthogonal persistence variable
+  stable var currentValue = 200   ;
+   let id  =234 ;  // behaviour like  constant
   // let string = "Shadab khan ";
   // Debug.print("hello");
   // Debug.print(debug_show(currentValue));
-  // Debug.print(debug_show(id));
+   Debug.print(debug_show(id));
   // Debug.print(string)
    public func topUp(amount : Nat) {
     currentValue += amount ;
