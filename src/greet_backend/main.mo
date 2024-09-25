@@ -16,7 +16,7 @@ actor  greet{
     
   };
   // toUp();
-
+//  that is update call
   public func withdraw(amount: Nat){
     let tempValue: Int = currentValue - amount ;
     if(tempValue  >= 0 ){
@@ -25,7 +25,11 @@ actor  greet{
     }else{
       Debug.print("Enter Valid amount");
     }
-  }
+  };
+  // that is query call using keyword  "query"
 
+  public query func checkBalance(): async Nat{
+    return currentValue;
+  };
   
 }
